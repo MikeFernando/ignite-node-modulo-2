@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/server.ts",
+    "lint": "eslint src --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +14,10 @@
     "fastify": "^4.23.2"
   },
   "devDependencies": {
+    "@rocketseat/eslint-config": "^2.1.0",
     "@types/node": "^20.7.1",
-    "typescript": "^5.2.2",
-    "tsx": "^3.13.0"
+    "eslint": "^8.50.0",
+    "tsx": "^3.13.0",
+    "typescript": "^5.2.2"
   }
 }
