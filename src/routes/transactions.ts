@@ -6,9 +6,7 @@ import { knex } from '../database'
 import { checkSessionIdExists } from '../middlewares/check-session-id-exists'
 
 export async function transactionsRoutes(app: FastifyInstance) {
-  app.addHook('preHandler', checkSessionIdExists)
-
-  app.get('/', async (request) => {
+  app.get('/', { preHandler: [checkSessionIdExists] }, async (request) => {
     const { sessionId } = request.cookies
 
     const transactions = await knex('transactions')
@@ -18,7 +16,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
     return { transactions }
   })
 
-  app.get('/:id', async (request) => {
+  app.get('/:id', { preHandler: [checkSessionIdExists] }, async (request) => {
     const getTransactionParamsSchema = z.object({
       id: z.string().uuid(),
     })
@@ -36,16 +34,20 @@ export async function transactionsRoutes(app: FastifyInstance) {
     return { transaction }
   })
 
-  app.get('/summary', async (request) => {
-    const { sessionId } = request.cookies
+  app.get(
+    '/summary',
+    { preHandler: [checkSessionIdExists] },
+    async (request) => {
+      const { sessionId } = request.cookies
 
-    const summary = await knex('transactions')
-      .where('session_id', sessionId)
-      .sum('amount', { as: 'amount' })
-      .first()
+      const summary = await knex('transactions')
+        .where('session_id', sessionId)
+        .sum('amount', { as: 'amount' })
+        .first()
 
-    return { summary }
-  })
+      return { summary }
+    },
+  )
 
   app.post('/', async (request, reply) => {
     const createTransactionBodySchema = z.object({
